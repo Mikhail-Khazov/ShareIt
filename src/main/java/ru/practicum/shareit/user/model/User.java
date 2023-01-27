@@ -1,26 +1,21 @@
-package ru.practicum.shareit.request;
+package ru.practicum.shareit.user.model;
 
 import lombok.*;
-import ru.practicum.shareit.user.model.User;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(of = "id")
-public class ItemRequest {
+public class User {
     long id;
-
     @NotBlank
-    String description;
-
+    String name;
+    @Email
     @NotNull
-    User requestor;
-
-
-    LocalDateTime created;
+    String email;
 }
