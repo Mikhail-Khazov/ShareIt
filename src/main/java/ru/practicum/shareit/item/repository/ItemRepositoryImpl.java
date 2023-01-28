@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.repository;
 
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
+import ru.practicum.shareit.IdGenerator;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.*;
@@ -10,11 +11,13 @@ import java.util.stream.Collectors;
 @Repository
 @AllArgsConstructor
 public class ItemRepositoryImpl implements ItemRepository {
+    private final IdGenerator idGenerator;
     private Map<Long, Item> items;
     private final Map<Long, List<Item>> userItemIndex = new LinkedHashMap<>();
 
     @Override
     public Item create(Item item) {
+        item.setId(idGenerator.generate());
         items.put(item.getId(), item);
         final List<Item> items = userItemIndex.computeIfAbsent(item.getOwner().getId(), k -> new ArrayList<>());
         items.add(item);

@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import ru.practicum.shareit.IdGenerator;
 import ru.practicum.shareit.exceptions.ForbiddenException;
 import ru.practicum.shareit.exceptions.ItemNotFoundException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
@@ -21,15 +20,12 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserService userService;
     private final ItemMapper itemMapper;
-    private final IdGenerator idGenerator;
 
     @Override
     public ItemDto create(long userId, ItemDto itemDto) {
         if (!userService.isExist(userId))
             throw new UserNotFoundException("Пользователь с id " + userId + " не найден.");
-        itemDto.setId(idGenerator.generate());
-        itemRepository.create(itemMapper.toItem(itemDto, userService.getUserModel(userId)));
-        return itemDto;
+        return itemMapper.toItemDto(itemRepository.create(itemMapper.toItem(itemDto, userService.getUserModel(userId))));
     }
 
     @Override
