@@ -10,7 +10,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
@@ -22,7 +21,6 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserService userService;
     private final ItemMapper itemMapper;
-    private final UserMapper userMapper;
     private final IdGenerator idGenerator;
 
     @Override
@@ -30,16 +28,15 @@ public class ItemServiceImpl implements ItemService {
         if (!userService.isExist(userId))
             throw new UserNotFoundException("Пользователь с id " + userId + " не найден.");
         itemDto.setId(idGenerator.generate());
-        itemDto.setOwnerId(userId);
-        itemRepository.create(itemMapper.toItem(itemDto));
+        itemRepository.create(itemMapper.toItem(itemDto, userService.getUserModel(userId)));
         return itemDto;
     }
 
     @Override
     public ItemDto update(long userId, long itemId, ItemDto itemDto) {
-        if (userId == itemRepository.get(itemId).get().getOwner().getId()) {
-            itemDto.setOwnerId(userId);
-            return itemMapper.toItemDto(itemRepository.update(itemMapper.toItem(itemDto), itemId, userId));
+        if (userId == itemRepository.get(itemId).orElseThrow(ItemNotFoundException::new).getOwner().getId()) {
+            return itemMapper.toItemDto(
+                    itemRepository.update(itemMapper.toItem(itemDto, userService.getUserModel(userId)), itemId, userId));
         } else throw new ForbiddenException("Редактировать вещи может только их владелец");
     }
 

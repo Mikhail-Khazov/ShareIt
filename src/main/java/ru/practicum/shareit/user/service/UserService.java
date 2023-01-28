@@ -7,6 +7,7 @@ import ru.practicum.shareit.exceptions.DuplicateEmailException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
@@ -52,5 +53,9 @@ public class UserService {
 
     public boolean isExist(long userId) {
         return repository.isExist(userId);
+    }
+
+    public User getUserModel(long userId) {
+        return repository.get(userId).orElseThrow(UserNotFoundException::new);
     }
 }
