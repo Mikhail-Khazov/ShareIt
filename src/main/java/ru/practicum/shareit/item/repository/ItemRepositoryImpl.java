@@ -4,27 +4,30 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Repository
 @AllArgsConstructor
 public class ItemRepositoryImpl implements ItemRepository {
-    private HashMap<Long, Item> repository;
+    private Map<Long, Item> repository;
+    private final Map<Long, List<Item>> userItemIndex = new LinkedHashMap<>();
 
     @Override
     public Item create(Item item) {
         repository.put(item.getId(), item);
+        final List<Item> items = userItemIndex.computeIfAbsent(item.getOwner().getId(), k -> new ArrayList<>());
+        items.add(item);
         return item;
     }
 
     @Override
-    public Item update(Item item, long itemId) {
+    public Item update(Item item, long itemId, long userId) {
         Item updatingItem = repository.get(itemId);
+        final List<Item> items = userItemIndex.computeIfAbsent(item.getOwner().getId(), k -> new ArrayList<>());
         if (item.getName() != null && !item.getName().isBlank()) {
             updatingItem.setName(item.getName());
+
         }
         if (item.getDescription() != null && !item.getDescription().isBlank()) {
             updatingItem.setDescription(item.getDescription());
@@ -32,13 +35,14 @@ public class ItemRepositoryImpl implements ItemRepository {
         if (item.getAvailable() != null) {
             updatingItem.setAvailable(item.getAvailable());
         }
-        repository.put(itemId, updatingItem);
+        items.remove(items.stream().filter(i -> i.getId() == itemId).findAny().get());
+        items.add(updatingItem);
         return updatingItem;
     }
 
     @Override
     public List<Item> getUserStuff(long userId) {
-        return repository.values().stream().filter(t -> t.getOwner().getId() == userId).collect(Collectors.toList());
+        return userItemIndex.get(userId);
     }
 
     @Override

@@ -6,14 +6,15 @@ import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
 public class UserRepositoryImpl implements UserRepository {
-    private final HashMap<Long, User> storage;
+    private final Map<Long, User> storage;
 
     @Override
     public User create(User user) {
@@ -24,25 +25,25 @@ public class UserRepositoryImpl implements UserRepository {
     @Override
     public User update(User user, long userId) {
         User updatingUser = storage.get(userId);
-        if (user.getName() != null && !user.getName().isEmpty()) {
+        if (user.getName() != null && !user.getName().isBlank()) {
             updatingUser.setName(user.getName());
         }
-        if (user.getEmail() != null && !user.getEmail().isEmpty()) {
+        if (user.getEmail() != null && !user.getEmail().isBlank()) {
             updatingUser.setEmail(user.getEmail());
         }
-        storage.put(userId, updatingUser);
         return updatingUser;
     }
 
     @Override
-    public User get(long id) {
-        return storage.get(id);
-
+    public Optional<User> get(long id) {
+        return Optional.of(storage.get(id));
     }
 
     @Override
-    public boolean isDuplicateEmail(UserDto userDto) {
-        List<User> duplicate = storage.values().stream().filter(u -> userDto.getEmail().equals(u.getEmail())).collect(Collectors.toList());
+    public boolean isDuplicateEmail(UserDto userDto, long userId) {
+        List<User> duplicate = storage.values().stream()
+                .filter(u -> userDto.getEmail().equals(u.getEmail()) && userId != u.getId())
+                .collect(Collectors.toList());
         return !duplicate.isEmpty();
     }
 

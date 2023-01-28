@@ -13,7 +13,6 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.service.UserService;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,7 +30,7 @@ public class ItemServiceImpl implements ItemService {
         if (!userService.isExist(userId))
             throw new UserNotFoundException("Пользователь с id " + userId + " не найден.");
         itemDto.setId(idGenerator.generate());
-        itemDto.setOwner(userMapper.toUser(userService.get(userId)));
+        itemDto.setOwnerId(userId);
         itemRepository.create(itemMapper.toItem(itemDto));
         return itemDto;
     }
@@ -39,7 +38,8 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto update(long userId, long itemId, ItemDto itemDto) {
         if (userId == itemRepository.get(itemId).get().getOwner().getId()) {
-            return itemMapper.toItemDto(itemRepository.update(itemMapper.toItem(itemDto), itemId));
+            itemDto.setOwnerId(userId);
+            return itemMapper.toItemDto(itemRepository.update(itemMapper.toItem(itemDto), itemId, userId));
         } else throw new ForbiddenException("Редактировать вещи может только их владелец");
     }
 
@@ -60,7 +60,6 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> search(long userId, String text) {
-        if (text.isBlank()) return Collections.emptyList();
         List<Item> items = itemRepository.search(text);
         if (items.isEmpty()) throw new ItemNotFoundException("По запросу " + text + " ничего не найдено");
         else return items.stream().map(itemMapper::toItemDto).collect(Collectors.toList());

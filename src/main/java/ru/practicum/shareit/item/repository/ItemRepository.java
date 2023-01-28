@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface ItemRepository {
     Item create(Item item);
 
-    Item update(Item item, long itemId);
+    Item update(Item item, long itemId, long userId);
 
     List<Item> getUserStuff(long userId);
 

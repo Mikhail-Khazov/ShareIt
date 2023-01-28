@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.IdGenerator;
 import ru.practicum.shareit.exceptions.DuplicateEmailException;
+import ru.practicum.shareit.exceptions.UserNotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.repository.UserRepository;
@@ -19,23 +20,26 @@ public class UserService {
     private final IdGenerator idGenerator;
 
     public UserDto create(UserDto userDto) {
-        if (repository.isDuplicateEmail(userDto))
-            throw new DuplicateEmailException("Пользователь с таким Email уже существует");
+        emailCheck(userDto, -1);
         userDto.setId(idGenerator.generate());
         repository.create(mapper.toUser(userDto));
         return userDto;
     }
 
     public UserDto update(UserDto userDto, long userId) {
-        if (userDto.getEmail() != null) {
-            if (repository.isDuplicateEmail(userDto))
-                throw new DuplicateEmailException("Пользователь с таким Email уже существует");
-        }
+        if (userDto.getEmail() != null) emailCheck(userDto, userId);
         return mapper.toUserDto(repository.update(mapper.toUser(userDto), userId));
     }
 
-    public UserDto get(long id) {
-        return mapper.toUserDto(repository.get(id));
+    private void emailCheck(UserDto userDto, long userId) {
+        if (repository.isDuplicateEmail(userDto, userId))
+            throw new DuplicateEmailException("Пользователь с таким Email уже существует");
+    }
+
+    public UserDto get(long userId) {
+        return mapper.toUserDto(repository.get(userId).orElseThrow(
+                () -> new UserNotFoundException("Пользователь с id " + userId + " не найден")
+        ));
     }
 
     public void delete(long userId) {
