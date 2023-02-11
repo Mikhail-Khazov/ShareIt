@@ -19,7 +19,21 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleBookingNotFound(final BookingNotFoundException e) {
+        log.warn("404", e);
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleUserNotFound(final UserNotFoundException e) {
+        log.warn("404", e);
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleStateNotFound(final StateNotFoundException e) {
         log.warn("404", e);
         return new ErrorResponse(e.getMessage());
     }
@@ -48,6 +62,27 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBedRequest(final MethodArgumentNotValidException e) {
+        log.warn("400", e);
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBedRequest(final ItemNotAvailableException e) {
+        log.warn("400", e);
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBedRequest(final WrongStateException e) {
+        log.warn("400", e);
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleBedRequest(final CommentValidationException e) {
         log.warn("400", e);
         return new ErrorResponse(e.getMessage());
     }

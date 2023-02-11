@@ -4,10 +4,6 @@ import lombok.*;
 import ru.practicum.shareit.booking.dto.constraintAnnotation.StartBeforeEnd;
 import ru.practicum.shareit.common.Create;
 import ru.practicum.shareit.common.Update;
-import ru.practicum.shareit.item.dto.ItemDtoLite;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
 
 import javax.validation.constraints.Future;
 import javax.validation.constraints.FutureOrPresent;
@@ -19,8 +15,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@StartBeforeEnd(groups = {Create.class, Update.class})             //Проверка даты старта и окончания аренды
-public class BookingDto {
+@StartBeforeEnd(groups = {Create.class, Update.class})
+public class BookingDtoSave {
     private long id;
 
     @NotNull(groups = {Create.class}, message = "Необходимо указать дату старта бронирования")
@@ -33,17 +29,9 @@ public class BookingDto {
     private LocalDateTime end;
 
     @NotNull(groups = {Create.class}, message = "Необходимо указать itemId")
-    private ItemDtoLite item;
+    private Long itemId;
 
-    private UserDto booker;
+    private Long bookerId;
 
     private String status;
-
-    public void setItem(Item item) {
-        this.item = new ItemDtoLite(item.getId(), item.getName(), item.getDescription());
-    }
-
-    public void setBooker(User booker) {
-        this.booker = new UserDto(booker.getId(), booker.getName(), booker.getEmail());
-    }
 }
