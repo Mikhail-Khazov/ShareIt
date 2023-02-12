@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -19,6 +20,8 @@ import static ru.practicum.shareit.item.controller.ItemController.X_SHARER_USER_
 @RequiredArgsConstructor
 public class BookingController {
     private final BookingService service;
+    private static final Sort DESC = Sort.by(Sort.Direction.DESC, "start");
+    private static final Sort ASC = Sort.by(Sort.Direction.ASC, "start");
 
     @PostMapping
     public BookingDto create(@RequestBody @Validated({Create.class}) BookingDtoSave bookingDtoSave,
@@ -41,16 +44,25 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> getAllForBooker(@RequestParam(defaultValue = "ALL") String state,
+                                            @RequestParam(name = "sort", defaultValue = "DESC") String sort,
                                             @RequestHeader(X_SHARER_USER_ID) Long bookerId) {
-        BookingState status = BookingState.from(state).orElseThrow(() -> new WrongStateException("Unknown state: " + state));
-        return service.getAllForBooker(status, bookerId);
+        return service.getAllForBooker(getBookingState(state), bookerId, getSort(sort));
     }
 
     @GetMapping(path = "/owner")
     public List<BookingDto> getAllForOwner(@RequestParam(defaultValue = "ALL") String state,
+                                           @RequestParam(name = "sort", defaultValue = "DESC") String sort,
                                            @RequestHeader(X_SHARER_USER_ID) Long ownerId) {
-        BookingState status = BookingState.from(state).orElseThrow(() -> new WrongStateException("Unknown state: " + state));
-        return service.getAllForOwner(status, ownerId);
+        return service.getAllForOwner(getBookingState(state), ownerId, getSort(sort));
     }
+
+    private Sort getSort(String sort) {
+        return sort.equalsIgnoreCase("DESC") ? DESC : ASC;
+    }
+
+    private BookingState getBookingState(String state) {
+        return BookingState.from(state).orElseThrow(() -> new WrongStateException("Unknown state: " + state));
+    }
+
 }
 

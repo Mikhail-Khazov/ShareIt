@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.service;
 
+import org.springframework.data.domain.Sort;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingDtoSave;
 import ru.practicum.shareit.booking.enums.BookingState;
@@ -13,8 +14,8 @@ public interface BookingService {
 
     BookingDto get(Long id, Long userId);
 
-    List<BookingDto> getAllForOwner(BookingState state, Long ownerId);
+    List<BookingDto> getAllForOwner(BookingState state, Long ownerId, Sort sort);
 
-    List<BookingDto> getAllForBooker(BookingState state, Long bookerId);
+    List<BookingDto> getAllForBooker(BookingState state, Long bookerId, Sort sort);
 
 }

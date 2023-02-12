@@ -17,21 +17,14 @@ import java.time.LocalDateTime;
 @Builder
 @StartBeforeEnd(groups = {Create.class, Update.class})
 public class BookingDtoSave {
-    private long id;
-
     @NotNull(groups = {Create.class}, message = "Необходимо указать дату старта бронирования")
     @FutureOrPresent(groups = {Create.class}, message = "Некорректная дата старта")
     private LocalDateTime start;
 
     @NotNull(groups = {Create.class}, message = "Необходимо указать дату завершения бронирования")
     @Future(groups = {Create.class}, message = "Некорректная дата завершения")
-    @FutureOrPresent(groups = {Update.class}, message = "Некорректная дата завершения бронирования")
     private LocalDateTime end;
 
     @NotNull(groups = {Create.class}, message = "Необходимо указать itemId")
     private Long itemId;
-
-    private Long bookerId;
-
-    private String status;
 }

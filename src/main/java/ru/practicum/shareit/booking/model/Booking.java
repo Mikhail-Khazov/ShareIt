@@ -10,13 +10,11 @@ import java.time.LocalDateTime;
 
 @Setter
 @Getter
-@ToString
-@AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(of = "id")
+@AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "bookings")
-@Builder
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

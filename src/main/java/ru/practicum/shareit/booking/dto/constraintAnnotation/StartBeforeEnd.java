@@ -5,7 +5,7 @@ import javax.validation.Payload;
 import java.lang.annotation.*;
 
 @Documented
-@Constraint(validatedBy = {StartEndConstraintValidator.class, StartEndConstraintValidatorSave.class})
+@Constraint(validatedBy = {StartEndConstraintValidatorSave.class})
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface StartBeforeEnd {

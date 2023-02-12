@@ -3,7 +3,6 @@ package ru.practicum.shareit.booking.dto;
 import lombok.*;
 import ru.practicum.shareit.booking.dto.constraintAnnotation.StartBeforeEnd;
 import ru.practicum.shareit.common.Create;
-import ru.practicum.shareit.common.Update;
 import ru.practicum.shareit.item.dto.ItemDtoLite;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -19,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@StartBeforeEnd(groups = {Create.class, Update.class})             //Проверка даты старта и окончания аренды
+@StartBeforeEnd(groups = {Create.class})             //Проверка даты старта и окончания аренды
 public class BookingDto {
     private long id;
 
@@ -29,7 +28,6 @@ public class BookingDto {
 
     @NotNull(groups = {Create.class}, message = "Необходимо указать дату завершения бронирования")
     @Future(groups = {Create.class}, message = "Некорректная дата завершения")
-    @FutureOrPresent(groups = {Update.class}, message = "Некорректная дата завершения бронирования")
     private LocalDateTime end;
 
     @NotNull(groups = {Create.class}, message = "Необходимо указать itemId")

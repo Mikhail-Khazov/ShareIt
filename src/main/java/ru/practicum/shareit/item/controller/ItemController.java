@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.common.Create;
 import ru.practicum.shareit.common.Update;
 import ru.practicum.shareit.item.dto.CommentDto;
+import ru.practicum.shareit.item.dto.CommentDtoSave;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoComplete;
 import ru.practicum.shareit.item.service.ItemService;
@@ -50,7 +51,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public CommentDto createComment(@RequestHeader(X_SHARER_USER_ID) long userId,
                                     @PathVariable Long itemId,
-                                    @RequestBody @Validated(Create.class) CommentDto commentDto) {
+                                    @RequestBody @Validated(Create.class) CommentDtoSave commentDto) {
         return itemService.createComment(userId, itemId, commentDto);
     }
 }

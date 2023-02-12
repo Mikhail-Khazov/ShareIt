@@ -26,14 +26,14 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public UserDto update(UserDto userDto, long userId) {
-        User user = mapper.toUser(get(userId));
+        User user = getUserModel(userId);
         if (userDto.getName() != null && !userDto.getName().isBlank()) {
             user.setName(userDto.getName());
         }
         if (userDto.getEmail() != null && !userDto.getEmail().isBlank()) {
             user.setEmail(userDto.getEmail());
         }
-        return mapper.toUserDto(repository.save(user));
+        return mapper.toUserDto(user);
     }
 
     public UserDto get(long userId) {

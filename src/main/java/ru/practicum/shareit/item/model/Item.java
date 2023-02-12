@@ -7,10 +7,9 @@ import javax.persistence.*;
 
 @Getter
 @Setter
-@ToString
-@AllArgsConstructor
+@ToString(onlyExplicitlyIncluded = true)
 @NoArgsConstructor
-@EqualsAndHashCode(of = "id")
+@AllArgsConstructor
 @Builder
 @Entity
 @Table(name = "items")
