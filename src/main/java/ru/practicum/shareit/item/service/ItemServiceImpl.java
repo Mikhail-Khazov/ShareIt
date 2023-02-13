@@ -70,7 +70,7 @@ public class ItemServiceImpl implements ItemService {
         Item item = itemRepository.findById(itemId).orElseThrow(
                 () -> new ItemNotFoundException("Предмет с id " + itemId + " не найден.")
         );
-        List<BookingDto> bookings = bookingRepository.getBookingsByItem(itemId, userId, ASC)
+        List<BookingDto> bookings = bookingRepository.getBookingsByItemApproved(itemId, userId, ASC)
                 .stream().map(bookingMapper::toDto).collect(toList());
         List<CommentDto> comments = commentRepository.findByItemId(itemId)
                 .stream().map(commentMapper::toCommentDto).collect(toList());
@@ -102,11 +102,15 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private BookingDto getLastBooking(List<BookingDto> bookings) {
-        return bookings.stream().findFirst().orElse(null);
+        return bookings.stream()
+                .filter(b -> !b.getStart().isAfter(LocalDateTime.now()))
+                .reduce((first, second) -> second).orElse(null);
     }
 
     private BookingDto getNextBooking(List<BookingDto> bookings) {
-        return bookings.stream().reduce((first, second) -> second).orElse(null);
+        return bookings.stream()
+                .filter(b -> b.getStart().isAfter(LocalDateTime.now()))
+                .findFirst().orElse(null);
     }
 
     @Override

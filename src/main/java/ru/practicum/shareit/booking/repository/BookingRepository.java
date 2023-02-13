@@ -29,7 +29,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("select b from Booking b where b.item.owner.id = ?1 ")
     List<Booking> getAllForOwner(Long ownerId, Sort sort);
 
-    @Query("select b from Booking b where b.item.owner.id = ?1 and b.status = 'APPROVED' ")
+    @Query("select b from Booking b where b.item.owner.id = ?1 and upper(b.status) like ('APPROVED') ")
     List<Booking> getAllForOwnerApproved(Long ownerId, Sort sort);
 
     @Query("select b from Booking b where b.item.owner.id = ?1 and b.start > ?2 ")
@@ -44,6 +44,6 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("select b from Booking b where b.item.owner.id = ?2 and b.status = ?1 ")
     List<Booking> getAllForOwnerWhereStateWaitingOrRejected(BookingStatus state, Long ownerId, Sort sort);
 
-    @Query("select b from Booking b where b.item.id = ?1 and b.item.owner.id = ?2 ")
-    List<Booking> getBookingsByItem(Long itemId, Long userId, Sort sort);
+    @Query("select b from Booking b where b.item.id = ?1 and b.item.owner.id = ?2 and upper(b.status) like ('APPROVED') ")
+    List<Booking> getBookingsByItemApproved(Long itemId, Long userId, Sort sort);
 }
