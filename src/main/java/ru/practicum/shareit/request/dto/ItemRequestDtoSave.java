@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item.dto;
+package ru.practicum.shareit.request.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,8 +14,8 @@ import javax.validation.constraints.Size;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CommentDtoSave {
+public class ItemRequestDtoSave {
     @NotBlank(groups = {Create.class, Update.class})
     @Size(max = 1024)
-    private String text;
+    private String description;
 }

@@ -1,7 +1,7 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -31,7 +31,6 @@ public class BookingServiceImpl implements BookingService {
     private final UserService userService;
     private final UserMapper userMapper;
     private final BookingMapper mapper;
-
 
     @Transactional
     @Override
@@ -70,48 +69,48 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public List<BookingDto> getAllForBooker(BookingState state, Long bookerId, Sort sort) {
+    public List<BookingDto> getAllForBooker(BookingState state, Long bookerId, PageRequest pageRequest) {
         userIsExistCheck(bookerId);
         List<Booking> bookings;
         switch (state) {
             case ALL:
-                bookings = repository.getAllForBooker(bookerId, sort);
+                bookings = repository.getAllForBooker(bookerId, pageRequest).toList();
                 break;
             case FUTURE:
-                bookings = repository.getAllForBookerWhereStateFuture(bookerId, LocalDateTime.now(), sort);
+                bookings = repository.getAllForBookerWhereStateFuture(bookerId, LocalDateTime.now(), pageRequest).toList();
                 break;
             case CURRENT:
-                bookings = repository.getAllForBookerWhereStateCurrent(bookerId, LocalDateTime.now(), sort);
+                bookings = repository.getAllForBookerWhereStateCurrent(bookerId, LocalDateTime.now(), pageRequest).toList();
                 break;
             case PAST:
-                bookings = repository.getAllForBookerWhereStatePast(bookerId, LocalDateTime.now(), sort);
+                bookings = repository.getAllForBookerWhereStatePast(bookerId, LocalDateTime.now(), pageRequest).toList();
                 break;
             default:
-                bookings = repository.getAllForBookerWhereStateWaitingOrRejected(BookingStatus.from(state.toString()), bookerId, sort);
+                bookings = repository.getAllForBookerWhereStateWaitingOrRejected(BookingStatus.from(state.toString()), bookerId, pageRequest).toList();
                 break;
         }
         return bookings.stream().map(mapper::toDto).collect(Collectors.toList());
     }
 
     @Override
-    public List<BookingDto> getAllForOwner(BookingState state, Long ownerId, Sort sort) {
+    public List<BookingDto> getAllForOwner(BookingState state, Long ownerId, PageRequest pageRequest) {
         userIsExistCheck(ownerId);
         List<Booking> bookings;
         switch (state) {
             case ALL:
-                bookings = repository.getAllForOwner(ownerId, sort);
+                bookings = repository.getAllForOwner(ownerId, pageRequest).toList();
                 break;
             case FUTURE:
-                bookings = repository.getAllForOwnerWhereStateFuture(ownerId, LocalDateTime.now(), sort);
+                bookings = repository.getAllForOwnerWhereStateFuture(ownerId, LocalDateTime.now(), pageRequest).toList();
                 break;
             case CURRENT:
-                bookings = repository.getAllForOwnerWhereStateCurrent(ownerId, LocalDateTime.now(), sort);
+                bookings = repository.getAllForOwnerWhereStateCurrent(ownerId, LocalDateTime.now(), pageRequest).toList();
                 break;
             case PAST:
-                bookings = repository.getAllForOwnerWhereStatePast(ownerId, LocalDateTime.now(), sort);
+                bookings = repository.getAllForOwnerWhereStatePast(ownerId, LocalDateTime.now(), pageRequest).toList();
                 break;
             default:
-                bookings = repository.getAllForOwnerWhereStateWaitingOrRejected(BookingStatus.from(state.toString()), ownerId, sort);
+                bookings = repository.getAllForOwnerWhereStateWaitingOrRejected(BookingStatus.from(state.toString()), ownerId, pageRequest).toList();
                 break;
         }
         return bookings.stream().map(mapper::toDto).collect(Collectors.toList());
