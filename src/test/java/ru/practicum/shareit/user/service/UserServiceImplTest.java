@@ -20,7 +20,6 @@ class UserServiceImplTest {
     UserRepository userRepository;
     UserService userService;
     UserMapper userMapper;
-
     UserDto userDto;
     User user;
 
