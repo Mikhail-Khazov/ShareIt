@@ -94,22 +94,19 @@ class BookingControllerTest {
                 .create(any(BookingDtoSave.class), anyLong());
     }
 
-//    @Test
-//    void create_whenDtoNotValid_thenThrowMethodArgumentNotValidException() throws Exception {
-//        bookingDtoSave.setEnd(LocalDateTime.now().minusDays(5));
-//        when(bookingService.create(any(BookingDtoSave.class), anyLong()))
-//                .thenThrow(MethodArgumentNotValidException.class);
-//
-//        mockMvc.perform(post("/bookings")
-//                        .header("X-Sharer-User-Id", id)
-//                        .contentType("application/json")
-//                        .content(mapper.writeValueAsString(bookingDtoSave)))
-//                .andExpect(status().isBadRequest());
-//
-//        verify(bookingService, times(1))
-//                .create(any(BookingDtoSave.class), anyLong());
-////        assertThrows(MethodArgumentNotValidException.class, () -> bookingController.create(bookingDtoSave, anyLong()));
-//    }
+    @Test
+    void create_whenDtoNotValid_thenThrowMethodArgumentNotValidException() throws Exception {
+        bookingDtoSave.setEnd(LocalDateTime.now().minusDays(9999));
+
+        mockMvc.perform(post("/bookings")
+                        .header("X-Sharer-User-Id", id)
+                        .contentType("application/json")
+                        .content(mapper.writeValueAsString(bookingDtoSave)))
+                .andExpect(status().isBadRequest());
+
+        verify(bookingService, times(0))
+                .create(any(BookingDtoSave.class), anyLong());
+    }
 
     @Test
     void approve_whenApproveSuccessfully_thenReturnBookingDto() throws Exception {

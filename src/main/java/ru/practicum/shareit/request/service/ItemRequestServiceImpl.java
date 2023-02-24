@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exceptions.ItemRequestNotFoundException;
 import ru.practicum.shareit.exceptions.UserNotFoundException;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -18,7 +19,10 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
 
 @Service
 @RequiredArgsConstructor
@@ -44,20 +48,19 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         List<ItemRequest> requests = repository.getAllByUserId(userId);
         List<Item> items = itemRepository.findAllByRequestIds(requests.stream().map(ItemRequest::getId).collect(Collectors.toList()));
         return requests.stream()
-                .map(r -> mapper.requestToDto(r, items.stream().map(itemMapper::toItemDto).collect(Collectors.toList())))
+                .map(request -> mapper.requestToDto(request, items.stream().map(itemMapper::toItemDto).collect(Collectors.toList())))
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<ItemRequestDto> getAll(Long userId, PageRequest pageRequest) {
         List<ItemRequest> requests = repository.findAll(pageRequest).toList();
-        List<Item> items = itemRepository.findAllByRequestIds(requests.stream().map(ItemRequest::getId).collect(Collectors.toList()));
+        if (requests.isEmpty()) return List.of();
+        Map<Long, List<ItemDto>> items = itemRepository.findAllByRequestIds(requests.stream().map(ItemRequest::getId).collect(Collectors.toList()))
+                .stream().map(itemMapper::toItemDto).collect(groupingBy(ItemDto::getRequestId));
         return requests.stream()
                 .filter(r -> r.getRequestor().getId() != userId)
-                .map(request -> mapper.requestToDto(request, items.stream()
-                        .filter(i -> i.getRequest().getId() == request.getId())
-                        .map(itemMapper::toItemDto)
-                        .collect(Collectors.toList())))
+                .map(request -> mapper.requestToDto(request, items.get(request.getId())))
                 .collect(Collectors.toList());
     }
 
