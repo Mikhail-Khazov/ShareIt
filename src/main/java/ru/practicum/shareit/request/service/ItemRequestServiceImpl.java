@@ -54,13 +54,12 @@ public class ItemRequestServiceImpl implements ItemRequestService {
 
     @Override
     public List<ItemRequestDto> getAll(Long userId, PageRequest pageRequest) {
-        List<ItemRequest> requests = repository.findAll(pageRequest).toList();
+        List<ItemRequest> requests = repository.findByRequestor_IdNot(userId, pageRequest).toList();
         if (requests.isEmpty()) return List.of();
         Map<Long, List<ItemDto>> items = itemRepository.findAllByRequestIds(requests.stream().map(ItemRequest::getId).collect(Collectors.toList()))
                 .stream().map(itemMapper::toItemDto).collect(groupingBy(ItemDto::getRequestId));
         return requests.stream()
-                .filter(r -> r.getRequestor().getId() != userId)
-                .map(request -> mapper.requestToDto(request, items.get(request.getId())))
+                .map(request -> mapper.requestToDto(request, items.getOrDefault(request.getId(), List.of())))
                 .collect(Collectors.toList());
     }
 
