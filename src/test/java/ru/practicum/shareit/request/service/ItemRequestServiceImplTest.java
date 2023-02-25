@@ -97,7 +97,7 @@ class ItemRequestServiceImplTest {
     void getAll_whenUserHasItemAndRequest_thenReturnListOfRequestDto() {
         User user = new User(2L, "Kevin", "kev@ya.ru");
         PageImpl<ItemRequest> page = new PageImpl<>(List.of(itemRequest));
-        when(itemRequestRepository.findAll(any(PageRequest.class)))
+        when(itemRequestRepository.findByRequestor_IdNot(anyLong(), any(PageRequest.class)))
                 .thenReturn(page);
         when(itemRepository.findAllByRequestIds(anyList()))
                 .thenReturn(List.of(item));
