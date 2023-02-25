@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,8 @@ import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.common.Create;
 import ru.practicum.shareit.exceptions.WrongStateException;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 import static ru.practicum.shareit.item.controller.ItemController.X_SHARER_USER_ID;
@@ -18,6 +21,7 @@ import static ru.practicum.shareit.item.controller.ItemController.X_SHARER_USER_
 @RestController
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
+@Validated
 public class BookingController {
     private final BookingService service;
     private static final Sort DESC = Sort.by(Sort.Direction.DESC, "start");
@@ -45,15 +49,19 @@ public class BookingController {
     @GetMapping
     public List<BookingDto> getAllForBooker(@RequestParam(defaultValue = "ALL") String state,
                                             @RequestParam(name = "sort", defaultValue = "DESC") String sort,
-                                            @RequestHeader(X_SHARER_USER_ID) Long bookerId) {
-        return service.getAllForBooker(getBookingState(state), bookerId, getSort(sort));
+                                            @RequestHeader(X_SHARER_USER_ID) Long bookerId,
+                                            @RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                            @RequestParam(defaultValue = "20") @Min(1) @Max(50) Integer size) {
+        return service.getAllForBooker(getBookingState(state), bookerId, PageRequest.of(from / size, size, getSort(sort)));
     }
 
     @GetMapping(path = "/owner")
     public List<BookingDto> getAllForOwner(@RequestParam(defaultValue = "ALL") String state,
                                            @RequestParam(name = "sort", defaultValue = "DESC") String sort,
-                                           @RequestHeader(X_SHARER_USER_ID) Long ownerId) {
-        return service.getAllForOwner(getBookingState(state), ownerId, getSort(sort));
+                                           @RequestHeader(X_SHARER_USER_ID) Long ownerId,
+                                           @RequestParam(defaultValue = "0") @Min(0) Integer from,
+                                           @RequestParam(defaultValue = "20") @Min(1) @Max(50) Integer size) {
+        return service.getAllForOwner(getBookingState(state), ownerId, PageRequest.of(from / size, size, getSort(sort)));
     }
 
     private Sort getSort(String sort) {

@@ -39,16 +39,16 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse handleForbidden(final ForbiddenException e) {
-        log.warn("403", e);
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleItemRequestNotFound(final ItemRequestNotFoundException e) {
+        log.warn("404", e);
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleConflict(final DuplicateEmailException e) {
-        log.warn("409", e);
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleForbidden(final ForbiddenException e) {
+        log.warn("403", e);
         return new ErrorResponse(e.getMessage());
     }
 
