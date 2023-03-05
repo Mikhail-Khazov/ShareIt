@@ -2,6 +2,7 @@ package ru.practicum.shareit.request.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.common.Create;
@@ -13,12 +14,11 @@ import javax.validation.constraints.Min;
 
 import static ru.practicum.shareit.item.controller.ItemController.X_SHARER_USER_ID;
 
-@RestController
+@Controller
 @RequestMapping(path = "/requests")
 @RequiredArgsConstructor
 @Validated
 public class ItemRequestController {
-    //    private final ItemRequestService service;
     private final RequestClient client;
 
     @PostMapping

@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.client.BookingClient;
@@ -16,7 +17,7 @@ import javax.validation.constraints.Min;
 
 import static ru.practicum.shareit.item.controller.ItemController.X_SHARER_USER_ID;
 
-@RestController
+@Controller
 @RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
 @Validated
